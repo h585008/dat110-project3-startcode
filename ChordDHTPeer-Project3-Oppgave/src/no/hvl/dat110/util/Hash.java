@@ -14,9 +14,11 @@ import java.security.NoSuchAlgorithmException;
 
 public class Hash { 
 	
-	private static BigInteger hashint; 
+	private static BigInteger hashint;
+	private static int digestlen = 0;
 	
-	public static BigInteger hashOf(String entity) {		
+	
+	public static BigInteger hashOf(String entity)  {		
 		
 		// Task: Hash a given string using MD5 and return the result as a BigInteger.
 		
@@ -30,6 +32,19 @@ public class Hash {
 		
 		// return the BigInteger
 		
+		 MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		    md.update(entity.getBytes());
+		    byte[] digest = md.digest();
+		    String myHash = toHex(digest);
+		    hashint = new BigInteger(myHash, 16);
+
+		    
 		return hashint;
 	}
 	
@@ -45,14 +60,26 @@ public class Hash {
 		
 		// return the address size
 		
-		return null;
+		BigInteger addressSize = new BigInteger("2");
+		try {
+			digestlen = MessageDigest.getInstance("MD5").getDigestLength();
+		} catch(NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		int mbit=digestlen*8;
+		return addressSize.pow(mbit);
+		
+		
 	}
 	
 	public static int bitSize() {
 		
-		int digestlen = 0;
-		
 		// find the digest length
+		try {
+			digestlen = MessageDigest.getInstance("MD5").getDigestLength();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 		
 		return digestlen*8;
 	}
